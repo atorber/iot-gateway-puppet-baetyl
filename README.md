@@ -118,3 +118,9 @@ docker build -t iot-gateway-puppet-baetyl -f DockerFile .
 ```
 docker run --env entrypoint="http://180.76.145.103:8372" --env productKey="cgateway" --env deviceName="bietest001" --env deviceSecret="zqjxba22s4h4rbj945jp" --env instanceId="zasr9fjmk53aur26" iot-gateway-puppet-baetyl:latest
 ```
+
+## 从dockerhub拉取镜像
+
+```
+docker push atorber/iot-gateway-puppet-baetyl:latest
+```
