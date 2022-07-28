@@ -108,7 +108,7 @@ npm start
 1. 打包docker镜像
 
 ```
-docker build -t iot-gateway-puppet-baetyl -f DockerFile .
+docker build -t iot-gateway-puppet-baetyl .
 ```
 
 2. 运行docker
