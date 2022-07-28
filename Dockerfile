@@ -4,4 +4,5 @@ COPY package.json ./
 
 RUN npm install
 COPY . .
+COPY .env .
 CMD [ "npm","run", "start" ]
