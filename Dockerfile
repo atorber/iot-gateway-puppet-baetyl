@@ -2,10 +2,12 @@ FROM node:16
 
 WORKDIR /usr/src/app
 
-COPY package.json ./
+COPY . /usr/src/app
+
+# COPY package.json ./
 
 RUN npm install
 
-COPY . .
+# COPY . .
 
 CMD [ "node","src/index.js" ]
