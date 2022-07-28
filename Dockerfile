@@ -1,7 +1,6 @@
 FROM node:16
-WORKDIR /usr/src/app
+WORKDIR ./
 COPY package.json ./
-
 RUN npm install
 COPY . .
 COPY .env .
