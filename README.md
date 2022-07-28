@@ -122,5 +122,5 @@ docker run --env entrypoint="http://180.76.145.103:8372" --env productKey="cgate
 ## 从dockerhub拉取镜像
 
 ```
-docker push atorber/iot-gateway-puppet-baetyl:latest
+docker pull atorber/iot-gateway-puppet-baetyl:latest
 ```
