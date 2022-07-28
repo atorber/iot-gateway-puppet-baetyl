@@ -1,13 +1,13 @@
 {
     "name": "iot-gateway-puppet-baetyl",
-    "version": "1.0.0",
+    "version": "0.2.0",
     "description": "",
-    "main": "index.js",
+    "main": "src/index.js",
     "scripts": {
       "test": "echo \"Error: no test specified\" && exit 1",
       "start": "node src/index.js"
     },
-    "author": "",
+    "author": "atorber",
     "license": "ISC",
     "dependencies": {
       "request": "^2.88.2",
