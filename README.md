@@ -113,7 +113,7 @@ docker build -t iot-gateway-puppet-baetyl .
 
 2. 运行docker
 
-> 在baetyl中部署运行时不需要再设置外部mqtt-broker
+> 在baetyl中部署运行时不需要再设置外部mqtt-broker，将环境变量替换为实际的设备配置
 
 ```
 docker run --env entrypoint="http://180.76.145.103:8372" --env productKey="cgateway" --env deviceName="bietest001" --env deviceSecret="zqjxba22s4h4rbj945jp" --env instanceId="zasr9fjmk53aur26" iot-gateway-puppet-baetyl:latest
@@ -121,6 +121,16 @@ docker run --env entrypoint="http://180.76.145.103:8372" --env productKey="cgate
 
 ## 从dockerhub拉取镜像
 
+1. 拉取镜像
+
 ```
 docker pull atorber/iot-gateway-puppet-baetyl:latest
+```
+
+2. 运行
+
+> 将环境变量替换为实际的设备配置
+
+```
+docker run --env entrypoint="http://180.76.145.103:8372" --env productKey="cgateway" --env deviceName="bietest001" --env deviceSecret="zqjxba22s4h4rbj945jp" --env instanceId="zasr9fjmk53aur26" atorber/iot-gateway-puppet-baetyl:latest
 ```
