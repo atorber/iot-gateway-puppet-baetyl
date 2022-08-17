@@ -24,7 +24,7 @@
 })
  
  baetylCleint.on('connect', function () {
-     baetylCleint.subscribe(process.env['baetyl_broker_report_topic']||'$baetyl/device/+/report', function (err) {
+     baetylCleint.subscribe(process.env['baetyl_broker_report_topic']||'thing/+/+/property/post', function (err) {
          if (!err) {
              console.debug('baetyl订阅消息成功')
          } else {
@@ -38,10 +38,40 @@
      console.log(topic,message.toString())
      let report = JSON.parse(message.toString())
      // console.log(report)
-     let payload = report.content.dmp
-     let subEquipment = {
-         productKey: report.meta.deviceModel,
-         deviceName: report.meta.device
+     if(report.content&&report.content.blink&&report.meta&&report.meta.deviceProduct&&report.meta.device){
+        let payload = report.content.blink
+        let subEquipment = {
+            productKey: report.meta.deviceProduct,
+            deviceName: report.meta.device
+        }
+        gwClient.eventPostSub(payload, subEquipment)
+     }else{
+        console.error('子设备消息格式错误')
      }
-     gwClient.eventPostSub(payload, subEquipment)
  })
+
+ /*
+{
+    "kind":"deviceReport",
+    "meta":{
+        "accessTemplate":"xw-modbus-access-template",
+        "device":"xw-mod-1",
+        "deviceProduct":"modbus-simulator-20220728",
+        "node":"node的名称",
+        "nodeProduct":"固定值"
+    },
+    "content":{
+        "blink":{
+            "reqId":"033cc79a-6adf-4d40-b5a1-3ff33693f19c",//uuid，保证唯一即可
+            "method":"thing.event.post",//固定值，就是这个值
+            "version":"1.0",//固定值，就是这个值
+            "timestamp":1659003513995,
+            "properties":{
+                "temperature":27.1,
+                "humidity":22,
+                "switch":"on/off"
+            }
+        }
+    }
+}
+ */
