@@ -15,13 +15,15 @@
  let gwClient = new GateWay(entrypoint, productKey, deviceName, deviceSecret, instanceId)
  
 //  启动baetyl客户端
- let baetylCleint = mqtt.connect({
+const optionsBaetyl = {
     host: process.env['baetyl_broker_host']||'0.0.0.0',
     username: process.env['baetyl_broker_username']||'',
     password: process.env['baetyl_broker_password']||'',
     port: process.env['baetyl_broker_port']||1883,
     clientId: v4()
-})
+}
+
+ const baetylCleint = mqtt.connect(optionsBaetyl)
  
  baetylCleint.on('connect', function () {
      baetylCleint.subscribe(process.env['baetyl_broker_report_topic']||'thing/+/+/property/post', function (err) {
@@ -31,6 +33,10 @@
              console.debug('baetyl订阅消息失败')
          }
      })
+ })
+
+ baetylCleint.on('disconnect',function(){
+    baetylCleint.reconnect()
  })
  
  baetylCleint.on('message', function (topic, message) {

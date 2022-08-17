@@ -26,13 +26,15 @@ class Device {
 
         console.debug(devieConfig)
 
-        let mqttClient = mqtt.connect({
+        const optionsDevice = {
             host: devieConfig.broker,
             username: devieConfig.username,
             password: devieConfig.password,
             port: devieConfig.port || 1883,
             clientId: v4()
-        })
+        }
+
+        let mqttClient = mqtt.connect(optionsDevice)
 
         mqttClient.on('connect', function (err) {
             mqttClient.subscribe(`thing/${this.productKey}/${this.deviceName}/raw/c2d`, function (err) {
@@ -43,6 +45,10 @@ class Device {
                 }
             })
         })
+
+        mqttClient.on('disconnect',function(){
+            mqttClient.reconnect()
+         })
 
         mqttClient.on('message', function (topic, message) {
             // message is Buffer

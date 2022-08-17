@@ -26,36 +26,16 @@ export baetyl_broker_report_topic="xxxx"
 
 ```
 //  启动baetyl客户端
- let baetylCleint = mqtt.connect({
+const optionsBaetyl = {
     host: process.env['baetyl_broker_host']||'0.0.0.0',
     username: process.env['baetyl_broker_username']||'',
     password: process.env['baetyl_broker_password']||'',
     port: process.env['baetyl_broker_port']||1883,
     clientId: v4()
-})
- 
- baetylCleint.on('connect', function () {
-     baetylCleint.subscribe(process.env['baetyl_broker_report_topic']||'$baetyl/device/+/report', function (err) {
-         if (!err) {
-             console.debug('baetyl订阅消息成功')
-         } else {
-             console.debug('baetyl订阅消息失败')
-         }
-     })
- })
- 
- baetylCleint.on('message', function (topic, message) {
-     console.log('从baetyl接收到的消息：')
-     console.log(topic,message.toString())
-     let report = JSON.parse(message.toString())
-     // console.log(report)
-     let payload = report.content.dmp
-     let subEquipment = {
-         productKey: report.meta.deviceModel,
-         deviceName: report.meta.device
-     }
-     gwClient.eventPostSub(payload, subEquipment)
- })
+}
+
+ const baetylCleint = mqtt.connect(optionsBaetyl)
+
 ```
 
 3. 设置DMP配置相关的环境变量,此处所有配置从DMP中获得
@@ -80,23 +60,22 @@ npm start
 {
     "kind":"deviceReport",
     "meta":{
-        "device":"biesubdevice001",
-        "deviceModel":"THM",
-        "accessTemplate":"接入模板"
+        "accessTemplate":"xw-modbus-access-template",
+        "device":"xw-mod-1",
+        "deviceProduct":"modbus-simulator-20220728",
+        "node":"node的名称",
+        "nodeProduct":"固定值"
     },
     "content":{
-        "temperature":10,
-        "dmp":{
-            "reqId":"442c1da4-9d3a-4f9b-a6e9-bfe858e4ac43",
-            "method":"thing.event.post",
-            "version":"1.0",
-            "timestamp":1610430718000,
-            "bindName":"MAIN",
-            "events":{
-                "bie":{
-                    "temperature":24,
-                    "humidity":30
-                }
+        "blink":{
+            "reqId":"033cc79a-6adf-4d40-b5a1-3ff33693f19c",//uuid，保证唯一即可
+            "method":"thing.event.post",//固定值，就是这个值
+            "version":"1.0",//固定值，就是这个值
+            "timestamp":1659003513995,
+            "properties":{
+                "temperature":27.1,
+                "humidity":22,
+                "switch":"on/off"
             }
         }
     }
