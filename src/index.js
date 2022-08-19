@@ -50,7 +50,9 @@ const optionsBaetyl = {
             productKey: report.meta.deviceProduct,
             deviceName: report.meta.device
         }
-        gwClient.eventPostSub(payload, subEquipment)
+        // gwClient.eventPostSub(payload, subEquipment)
+        gwClient.propertyPostSub(payload, subEquipment)
+
      }else{
         console.error('子设备消息格式错误')
      }
