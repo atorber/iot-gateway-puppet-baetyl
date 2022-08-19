@@ -20,6 +20,7 @@ export baetyl_broker_username="xxxx"
 export baetyl_broker_password="xxxx"
 export baetyl_broker_port="xxxx"
 export baetyl_broker_report_topic="xxxx"
+export baetyl_broker_event_topic="xxxx"
 ```
 
 对照代码位置

@@ -28,11 +28,19 @@ const optionsBaetyl = {
  baetylCleint.on('connect', function () {
      baetylCleint.subscribe(process.env['baetyl_broker_report_topic']||'thing/+/+/property/post', function (err) {
          if (!err) {
-             console.debug('baetyl订阅消息成功')
+             console.debug('baetyl订阅属性消息成功')
          } else {
-             console.debug('baetyl订阅消息失败')
+             console.debug('baetyl订阅属性消息失败')
          }
      })
+     baetylCleint.subscribe(process.env['baetyl_broker_event_topic']||'thing/+/+/event/post', function (err) {
+        if (!err) {
+            console.debug('baetyl订阅事件消息成功')
+        } else {
+            console.debug('baetyl订阅事件消息失败')
+        }
+    })
+     
  })
 
  baetylCleint.on('disconnect',function(){
@@ -45,19 +53,30 @@ const optionsBaetyl = {
      let report = JSON.parse(message.toString())
      // console.log(report)
      if(report.content&&report.content.blink&&report.meta&&report.meta.deviceProduct&&report.meta.device){
-        let payload = report.content.blink
-        let subEquipment = {
-            productKey: report.meta.deviceProduct,
-            deviceName: report.meta.device
-        }
-        gwClient.propertyPostSub(payload, subEquipment)
 
-        // 向事件接口同时上报一条消息，事件名称为 bie
-        // payload.events = {}
-        // payload.method = "thing.event.post"
-        // payload.events.bie =  payload.properties
-        // delete payload.properties
-        // gwClient.eventPostSub(payload, subEquipment)
+        if(topic.indexOf("property/post") != -1){
+
+            console.log('收到一条属性消息')
+
+            let payload = report.content.blink
+            let subEquipment = {
+                productKey: report.meta.deviceProduct,
+                deviceName: report.meta.device
+            }
+            gwClient.propertyPostSub(payload, subEquipment)
+        }
+
+        if(topic.indexOf("event/post") != -1){
+
+            console.log('收到一条事件消息')
+        
+            let payload = report.content.blink
+            let subEquipment = {
+                productKey: report.meta.deviceProduct,
+                deviceName: report.meta.device
+            }
+            gwClient.eventPostSub(payload, subEquipment)
+        }
 
      }else{
         console.error('子设备消息格式错误')
