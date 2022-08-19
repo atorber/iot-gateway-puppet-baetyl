@@ -54,7 +54,7 @@ const optionsBaetyl = {
      // console.log(report)
      if(report.content&&report.content.blink&&report.meta&&report.meta.deviceProduct&&report.meta.device){
 
-        if(topic.indexOf("property/post") != -1){
+        if(topic.indexOf("property/post") != -1||report.content.blink.properties){
 
             console.log('收到一条属性消息')
 
@@ -66,7 +66,7 @@ const optionsBaetyl = {
             gwClient.propertyPostSub(payload, subEquipment)
         }
 
-        if(topic.indexOf("event/post") != -1){
+        if(topic.indexOf("event/post") != -1||report.content.blink.events){
 
             console.log('收到一条事件消息')
         
