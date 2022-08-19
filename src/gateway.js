@@ -15,12 +15,16 @@ class GateWay extends Device {
     propertyPostSub(payload, subEquipment) {
         const topic = `thing/${this.productKey}/${this.deviceName}/property/post`
         payload.subEquipment = subEquipment
+        console.log('从baetyl发送到DMP的消息：')
+        console.debug(topic, JSON.stringify(payload))
         this.mqttClient.publish(topic, JSON.stringify(payload))
     }
 
     propertyBatchSub(payload, subEquipment) {
         const topic = `thing/${this.productKey}/${this.deviceName}/property/batch`
         payload.subEquipment = subEquipment
+        console.log('从baetyl发送到DMP的消息：')
+        console.debug(topic, JSON.stringify(payload))
         this.mqttClient.publish(topic, JSON.stringify(payload))
     }
 
