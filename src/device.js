@@ -24,7 +24,7 @@ class Device {
         )
         const devieConfig = await auth.getResources()
 
-        console.debug(devieConfig)
+        console.debug('devieConfig',devieConfig)
 
         const optionsDevice = {
             host: devieConfig.broker,
