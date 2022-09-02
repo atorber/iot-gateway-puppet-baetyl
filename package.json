@@ -4,18 +4,19 @@
     "description": "",
     "main": "src/index.js",
     "scripts": {
-      "test": "echo \"Error: no test specified\" && exit 1",
-      "start": "node src/index.js"
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "start": "node src/index.js"
     },
     "author": "atorber",
     "license": "ISC",
     "dependencies": {
-      "request": "^2.88.2",
-      "request-promise": "^4.2.6",
-      "crypto": "^1.0.1",
-      "mqtt": "^4.3.7",
-      "urlencode": "^1.1.0",
-      "uuid": "^8.3.2"
+        "crypto": "^1.0.1",
+        "fs": "^0.0.1-security",
+        "mqtt": "^4.3.7",
+        "path": "^0.12.7",
+        "request": "^2.88.2",
+        "request-promise": "^4.2.6",
+        "urlencode": "^1.1.0",
+        "uuid": "^8.3.2"
     }
-  }
-  
+}

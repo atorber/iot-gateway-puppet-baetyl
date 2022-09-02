@@ -2,59 +2,93 @@
  * baetyl-broker转dmp
  */
 
- const { v4 } = require('uuid')
- const mqtt = require('mqtt')
- const { GateWay } = require('./gateway')
- 
- const entrypoint = process.env['entrypoint'];
- const productKey = process.env['productKey'];
- const deviceName = process.env['deviceName'];
- const deviceSecret = process.env['deviceSecret'];
- const instanceId = process.env['instanceId'];
- 
- //  启动baetyl客户端
-const optionsBaetyl = {
-    host: process.env['baetyl_broker_host']||'0.0.0.0',
-    username: process.env['baetyl_broker_username']||'',
-    password: process.env['baetyl_broker_password']||'',
-    port: process.env['baetyl_broker_port']||1883,
-    clientId: v4()
+const { v4 } = require('uuid')
+const mqtt = require('mqtt')
+const { GateWay } = require('./gateway')
+
+const fs = require('fs')
+const path = require('path')
+
+const isUserName = process.env['baetyl_broker_username'] || false;
+
+let baetylCleint = {}
+const HOST = process.env['baetyl_broker_host'] || '0.0.0.0'
+const PORT = process.env['baetyl_broker_port'] || 1883
+let optionsBaetyl = {}
+
+// 判断baetylCleint鉴权方式，当环境变量中没有baetyl_broker_username字段时，默认为自签证书认证，读取baetyl应用内置证书
+if (!isUserName) {
+
+    const KEY = fs.readFileSync('var/lib/baetyl/system/certs/key.pem')
+    const CERT = fs.readFileSync('var/lib/baetyl/system/certs/crt.pem')
+    const TRUSTED_CA_LIST = fs.readFileSync('var/lib/baetyl/system/certs/ca.pem')
+
+    optionsBaetyl = {
+        port: PORT,
+        host: HOST,
+        key: KEY,
+        cert: CERT,
+        rejectUnauthorized: true,
+        // The CA list will be used to determine if server is authorized
+        ca: TRUSTED_CA_LIST,
+        protocol: 'mqtts',
+        clientId: v4()
+    }
+
+} else {
+
+    optionsBaetyl = {
+        host: HOST,
+        username: process.env['baetyl_broker_username'] || '',
+        password: process.env['baetyl_broker_password'] || '',
+        port: PORT,
+        clientId: v4()
+    }
+
 }
 
- let baetylCleint = mqtt.connect(optionsBaetyl)
+baetylCleint = mqtt.connect(optionsBaetyl)
 
- let gwClient = new GateWay(entrypoint, productKey, deviceName, deviceSecret, instanceId, baetylCleint)
- 
- baetylCleint.on('connect', function () {
-     baetylCleint.subscribe(process.env['baetyl_broker_report_topic']||'thing/+/+/property/post', function (err) {
-         if (!err) {
-             console.debug('baetyl订阅属性消息成功')
-         } else {
-             console.debug('baetyl订阅属性消息失败')
-         }
-     })
-     baetylCleint.subscribe(process.env['baetyl_broker_event_topic']||'thing/+/+/event/post', function (err) {
+
+// DMP客户端
+const entrypoint = process.env['entrypoint'];
+const productKey = process.env['productKey'];
+const deviceName = process.env['deviceName'];
+const deviceSecret = process.env['deviceSecret'];
+const instanceId = process.env['instanceId'];
+
+let gwClient = new GateWay(entrypoint, productKey, deviceName, deviceSecret, instanceId, baetylCleint)
+
+baetylCleint.on('connect', function () {
+    baetylCleint.subscribe(process.env['baetyl_broker_report_topic'] || 'thing/+/+/property/post', function (err) {
+        if (!err) {
+            console.debug('baetyl订阅属性消息成功')
+        } else {
+            console.debug('baetyl订阅属性消息失败')
+        }
+    })
+    baetylCleint.subscribe(process.env['baetyl_broker_event_topic'] || 'thing/+/+/event/post', function (err) {
         if (!err) {
             console.debug('baetyl订阅事件消息成功')
         } else {
             console.debug('baetyl订阅事件消息失败')
         }
     })
-     
- })
 
- baetylCleint.on('disconnect',function(){
+})
+
+baetylCleint.on('disconnect', function () {
     baetylCleint.reconnect()
- })
- 
- baetylCleint.on('message', function (topic, message) {
-     console.log('从baetyl接收到的消息：')
-     console.log(topic,message.toString())
-     let report = JSON.parse(message.toString())
-     // console.log(report)
-     if(report.content&&report.content.blink&&report.meta&&report.meta.deviceProduct&&report.meta.device){
+})
 
-        if(topic.indexOf("property/post") != -1||report.content.blink.properties){
+baetylCleint.on('message', function (topic, message) {
+    console.log('从baetyl接收到的消息：')
+    console.log(topic, message.toString())
+    let report = JSON.parse(message.toString())
+    // console.log(report)
+    if (report.content && report.content.blink && report.meta && report.meta.deviceProduct && report.meta.device) {
+
+        if (topic.indexOf("property/post") != -1 || report.content.blink.properties) {
 
             console.log('收到一条属性消息')
 
@@ -66,10 +100,10 @@ const optionsBaetyl = {
             gwClient.propertyPostSub(payload, subEquipment)
         }
 
-        if(topic.indexOf("event/post") != -1||report.content.blink.events){
+        if (topic.indexOf("event/post") != -1 || report.content.blink.events) {
 
             console.log('收到一条事件消息')
-        
+
             let payload = report.content.blink
             let subEquipment = {
                 productKey: report.meta.deviceProduct,
@@ -78,33 +112,33 @@ const optionsBaetyl = {
             gwClient.eventPostSub(payload, subEquipment)
         }
 
-     }else{
+    } else {
         console.error('子设备消息格式错误')
-     }
- })
-
- /*
-{
-    "kind":"deviceReport",
-    "meta":{
-        "accessTemplate":"xw-modbus-access-template",
-        "device":"xw-mod-1",
-        "deviceProduct":"modbus-simulator-20220728",
-        "node":"node的名称",
-        "nodeProduct":"固定值"
-    },
-    "content":{
-        "blink":{
-            "reqId":"033cc79a-6adf-4d40-b5a1-3ff33693f19c",//uuid，保证唯一即可
-            "method":"thing.event.post",//固定值，就是这个值
-            "version":"1.0",//固定值，就是这个值
-            "timestamp":1659003513995,
-            "properties":{
-                "temperature":27.1,
-                "humidity":22,
-                "switch":"on/off"
-            }
-        }
     }
+})
+
+/*
+{
+   "kind":"deviceReport",
+   "meta":{
+       "accessTemplate":"xw-modbus-access-template",
+       "device":"xw-mod-1",
+       "deviceProduct":"modbus-simulator-20220728",
+       "node":"node的名称",
+       "nodeProduct":"固定值"
+   },
+   "content":{
+       "blink":{
+           "reqId":"033cc79a-6adf-4d40-b5a1-3ff33693f19c",//uuid，保证唯一即可
+           "method":"thing.event.post",//固定值，就是这个值
+           "version":"1.0",//固定值，就是这个值
+           "timestamp":1659003513995,
+           "properties":{
+               "temperature":27.1,
+               "humidity":22,
+               "switch":"on/off"
+           }
+       }
+   }
 }
- */
+*/
