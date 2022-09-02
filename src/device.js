@@ -4,17 +4,17 @@ const { Auth } = require('./auth')
 const mqtt = require('mqtt')
 
 class Device {
-    constructor(entrypoint, productKey, deviceName, deviceSecret, instanceId) {
+    constructor(entrypoint, productKey, deviceName, deviceSecret, instanceId, baetylMqttClient) {
         this.entrypoint = entrypoint;
         this.productKey = productKey;
         this.deviceName = deviceName;
         this.deviceSecret = deviceSecret;
         this.instanceId = instanceId;
         this.mqttClient = ''
-        this.init()
+        this.init(baetylMqttClient)
     }
 
-    async init() {
+    async init(baetylMqttClient) {
         const auth = new Auth(
             this.entrypoint,
             this.productKey,
@@ -24,7 +24,7 @@ class Device {
         )
         const devieConfig = await auth.getResources()
 
-        console.debug('devieConfig',devieConfig)
+        console.debug('devieConfig', devieConfig)
 
         const optionsDevice = {
             host: devieConfig.broker,
@@ -34,31 +34,104 @@ class Device {
             clientId: v4()
         }
 
-        let mqttClient = mqtt.connect(optionsDevice)
+        this.mqttClient = mqtt.connect(optionsDevice)
 
-        mqttClient.on('connect', function (err) {
-            mqttClient.subscribe(`thing/${this.productKey}/${this.deviceName}/raw/c2d`, function (err) {
-                if (!err) {
-                    console.debug('网关mqtt连接已建立')
-                } else {
-                    console.debug('网关mqtt连接失败')
-                }
-            })
+        this.mqttClient.on('connect', function (err) {
+
+            this.subPropertyInvoke()
+            this.subCommandInvoke()
+            this.subC2d()
+
         })
 
-        mqttClient.on('disconnect',function(){
+        this.mqttClient.on('disconnect', function () {
             mqttClient.reconnect()
-         })
+        })
 
-        mqttClient.on('message', function (topic, message) {
+        this.mqttClient.on('message', function (topic, message) {
             // message is Buffer
             console.log(message.toString())
             console.log(topic)
-            // mqttClient.end()
+
+            let report = JSON.parse(message.toString())
+            // console.log(report)
+            if (report.subEquipment && report.method) {
+
+                if (topic.indexOf("property/invoke") != -1) {
+
+                    console.log('收到一条设置属性消息')
+                    const curSubEquipment = report.subEquipment
+                    const topic = `thing/${curSubEquipment.productKey}/${curSubEquipment.deviceName}/property/invoke`
+                    delete report.subEquipment
+                    let payload = {
+                        "kind": "deviceDelta",
+                        "meta": {
+                            "accessTemplate": "xw-modbus-access-template",
+                            "device": curSubEquipment.deviceName, // 子设备的deviceName
+                            "deviceProduct": curSubEquipment.productKey, // 子设备的productKey
+                            "node": this.deviceName, // 网关的deviceName
+                            "nodeProduct": this.productKey // 网关的productKey
+                        },
+                        "content": {
+                            "blink": report
+                        }
+                    }
+                    baetylMqttClient.publish(topic, JSON.stringify(payload))
+                }
+
+                //    if(topic.indexOf("event/post") != -1||report.content.blink.events){
+
+                //        console.log('收到一条事件消息')
+
+                //        let payload = report.content.blink
+                //        let subEquipment = {
+                //            productKey: report.meta.deviceProduct,
+                //            deviceName: report.meta.device
+                //        }
+                //        gwClient.eventPostSub(payload, subEquipment)
+                //    }
+
+            } else {
+                console.error('设备消息格式错误')
+            }
+
         })
+    }
 
-        this.mqttClient = mqttClient
+    subPropertyInvoke() {
+        const topic = `thing/${this.productKey}/${this.deviceName}/property/invoke`
 
+        this.mqttClient.subscribe(topic, function (err) {
+            if (!err) {
+                console.debug('订阅更新设备可写属性消息成功')
+            } else {
+                console.debug('订阅更新设备可写属性消息失败')
+            }
+        })
+    }
+
+    subCommandInvoke() {
+        const topic = `thing/${this.productKey}/${this.deviceName}/command/invoke`
+
+        this.mqttClient.subscribe(topic, function (err) {
+            if (!err) {
+                console.debug('订阅云端调用设备端服务消息成功')
+            } else {
+                console.debug('订阅云端调用设备端服务消息失败')
+            }
+        })
+    }
+
+    subC2d() {
+        const topic = `thing/${this.productKey}/${this.deviceName}/raw/c2d`
+
+        this.mqttClient.subscribe(topic, function (err) {
+            if (!err) {
+                console.debug('订阅自定义透传信息成功')
+            } else {
+                console.debug('订阅自定义透传信息失败')
+            }
+        })
     }
 
     d2cRawPost(payload) {

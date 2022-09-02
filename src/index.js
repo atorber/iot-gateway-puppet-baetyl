@@ -12,9 +12,7 @@
  const deviceSecret = process.env['deviceSecret'];
  const instanceId = process.env['instanceId'];
  
- let gwClient = new GateWay(entrypoint, productKey, deviceName, deviceSecret, instanceId)
- 
-//  启动baetyl客户端
+ //  启动baetyl客户端
 const optionsBaetyl = {
     host: process.env['baetyl_broker_host']||'0.0.0.0',
     username: process.env['baetyl_broker_username']||'',
@@ -23,7 +21,9 @@ const optionsBaetyl = {
     clientId: v4()
 }
 
- const baetylCleint = mqtt.connect(optionsBaetyl)
+ let baetylCleint = mqtt.connect(optionsBaetyl)
+
+ let gwClient = new GateWay(entrypoint, productKey, deviceName, deviceSecret, instanceId, baetylCleint)
  
  baetylCleint.on('connect', function () {
      baetylCleint.subscribe(process.env['baetyl_broker_report_topic']||'thing/+/+/property/post', function (err) {
