@@ -92,7 +92,7 @@ class Device {
                 //    }
 
             } else {
-                console.error('设备消息格式错误')
+                console.error('暂未支持转发的接口')
             }
 
         })
