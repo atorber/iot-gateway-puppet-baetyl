@@ -46,7 +46,7 @@ class Device {
         })
 
         this.mqttClient.on('disconnect', function () {
-            mqttClient.reconnect()
+            that.mqttClient.reconnect()
         })
 
         this.mqttClient.on('message', function (topic, message) {
