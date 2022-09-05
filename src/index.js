@@ -15,8 +15,6 @@ let wait = ms => new Promise(resolve => setTimeout(resolve, ms));
 const isUserName = process.env['baetyl_broker_username'] || false;
 
 let baetylCleint = {}
-const HOST = process.env['baetyl_broker_host'] || 'ssl://baetyl-broker.baetyl-edge-system:50010'
-const PORT = process.env['baetyl_broker_port'] || 1883
 let optionsBaetyl = {}
 
 // 判断baetylCleint鉴权方式，当环境变量中没有baetyl_broker_username字段时，默认为自签证书认证，读取baetyl应用内置证书
@@ -27,7 +25,8 @@ if (!isUserName) {
     const TRUSTED_CA_LIST = fs.readFileSync('/var/lib/baetyl/system/certs/ca.pem')
 
     console.debug('crt.pem', CERT)
-
+    const HOST = process.env['baetyl_broker_host'] || 'ssl://baetyl-broker.baetyl-edge-system'
+    const PORT = process.env['baetyl_broker_port'] || 50010
     optionsBaetyl = {
         port: PORT,
         host: HOST,
@@ -41,7 +40,8 @@ if (!isUserName) {
     }
 
 } else {
-
+    const HOST = process.env['baetyl_broker_host'] || '0.0.0.0'
+    const PORT = process.env['baetyl_broker_port'] || 1883
     optionsBaetyl = {
         host: HOST,
         username: process.env['baetyl_broker_username'] || '',
@@ -87,14 +87,12 @@ baetylCleint.on('connect', function () {
 })
 
 baetylCleint.on('disconnect', async function () {
-    await wait(1000)
+    await wait(2000)
     baetylCleint.reconnect()
 })
 
 baetylCleint.on('error', async function (err) {
     console.log('baetyl客户端连接错误', err)
-    await wait(1000)
-    baetylCleint.reconnect()
 })
 
 baetylCleint.on('message', function (topic, message) {

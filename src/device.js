@@ -48,7 +48,7 @@ class Device {
         })
 
         this.mqttClient.on('disconnect', async function () {
-            await wait(1000)
+            await wait(2000)
             that.mqttClient.reconnect()
         })
 
@@ -58,8 +58,6 @@ class Device {
 
         this.mqttClient.on('error', async function (err) {
             console.log('DMP客户端连接错误', err)
-            await wait(1000)
-            that.mqttClient.reconnect()
         })
 
         this.mqttClient.on('message', function (topic, message) {
