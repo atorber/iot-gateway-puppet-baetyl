@@ -15,7 +15,7 @@ let wait = ms => new Promise(resolve => setTimeout(resolve, ms));
 const isUserName = process.env['baetyl_broker_username'] || false;
 
 let baetylCleint = {}
-const HOST = process.env['baetyl_broker_host'] || '0.0.0.0'
+const HOST = process.env['baetyl_broker_host'] || 'ssl://baetyl-broker.baetyl-edge-system:5001'
 const PORT = process.env['baetyl_broker_port'] || 1883
 let optionsBaetyl = {}
 
