@@ -19,9 +19,9 @@ let optionsBaetyl = {}
 // 判断baetylCleint鉴权方式，当环境变量中没有baetyl_broker_username字段时，默认为自签证书认证，读取baetyl应用内置证书
 if (!isUserName) {
 
-    const KEY = fs.readFileSync('var/lib/baetyl/system/certs/key.pem')
-    const CERT = fs.readFileSync('var/lib/baetyl/system/certs/crt.pem')
-    const TRUSTED_CA_LIST = fs.readFileSync('var/lib/baetyl/system/certs/ca.pem')
+    const KEY = fs.readFileSync('/var/lib/baetyl/system/certs/key.pem')
+    const CERT = fs.readFileSync('/var/lib/baetyl/system/certs/crt.pem')
+    const TRUSTED_CA_LIST = fs.readFileSync('/var/lib/baetyl/system/certs/ca.pem')
 
     optionsBaetyl = {
         port: PORT,
