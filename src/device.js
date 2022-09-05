@@ -15,6 +15,7 @@ class Device {
     }
 
     async init(baetylMqttClient) {
+        const that = this
         const auth = new Auth(
             this.entrypoint,
             this.productKey,
@@ -38,9 +39,9 @@ class Device {
 
         this.mqttClient.on('connect', function (err) {
 
-            this.subPropertyInvoke()
-            this.subCommandInvoke()
-            this.subC2d()
+            that.subPropertyInvoke()
+            that.subCommandInvoke()
+            that.subC2d()
 
         })
 
