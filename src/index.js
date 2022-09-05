@@ -82,7 +82,7 @@ baetylCleint.on('disconnect', function () {
 })
 
 baetylCleint.on('message', function (topic, message) {
-    console.log('从baetyl接收到的消息：')
+    console.log('从baetyl订阅到的消息：')
     console.log(topic, message.toString())
     let report = JSON.parse(message.toString())
     // console.log(report)
@@ -90,7 +90,7 @@ baetylCleint.on('message', function (topic, message) {
 
         if (topic.indexOf("property/post") != -1 || report.content.blink.properties) {
 
-            console.log('收到一条属性消息')
+            console.log('从baetyl收到一条属性上报消息')
 
             let payload = report.content.blink
             let subEquipment = {
@@ -102,7 +102,7 @@ baetylCleint.on('message', function (topic, message) {
 
         if (topic.indexOf("event/post") != -1 || report.content.blink.events) {
 
-            console.log('收到一条事件消息')
+            console.log('从baetyl收到一条事件上报消息')
 
             let payload = report.content.blink
             let subEquipment = {

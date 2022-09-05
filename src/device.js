@@ -60,7 +60,7 @@ class Device {
 
                 if (topic.indexOf("property/invoke") != -1) {
 
-                    console.log('收到一条设置属性消息')
+                    console.log('从DMP收到一条设置属性消息')
                     const curSubEquipment = report.subEquipment
                     const topic = `thing/${curSubEquipment.productKey}/${curSubEquipment.deviceName}/property/invoke`
                     delete report.subEquipment
@@ -70,13 +70,16 @@ class Device {
                             "accessTemplate": "xw-modbus-access-template",
                             "device": curSubEquipment.deviceName, // 子设备的deviceName
                             "deviceProduct": curSubEquipment.productKey, // 子设备的productKey
-                            "node": this.deviceName, // 网关的deviceName
-                            "nodeProduct": this.productKey // 网关的productKey
+                            "node": that.deviceName, // 网关的deviceName
+                            "nodeProduct": that.productKey // 网关的productKey
                         },
                         "content": {
                             "blink": report
                         }
                     }
+
+                    console.log('即将发送到baetyl-broker的消息：', topic, JSON.stringify(payload))
+
                     baetylMqttClient.publish(topic, JSON.stringify(payload))
                 }
 
