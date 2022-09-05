@@ -9,6 +9,9 @@ const { GateWay } = require('./gateway')
 const fs = require('fs')
 const path = require('path')
 
+//定义一个延时方法
+let wait = ms => new Promise(resolve => setTimeout(resolve, ms));
+
 const isUserName = process.env['baetyl_broker_username'] || false;
 
 let baetylCleint = {}
@@ -22,6 +25,8 @@ if (!isUserName) {
     const KEY = fs.readFileSync('/var/lib/baetyl/system/certs/key.pem')
     const CERT = fs.readFileSync('/var/lib/baetyl/system/certs/crt.pem')
     const TRUSTED_CA_LIST = fs.readFileSync('/var/lib/baetyl/system/certs/ca.pem')
+
+    console.debug('crt.pem', CERT)
 
     optionsBaetyl = {
         port: PORT,
@@ -77,7 +82,18 @@ baetylCleint.on('connect', function () {
 
 })
 
-baetylCleint.on('disconnect', function () {
+baetylCleint.on('connect', function () {
+    console.log('baetylCleint客户端连接成功')
+})
+
+baetylCleint.on('disconnect', async function () {
+    await wait(1000)
+    baetylCleint.reconnect()
+})
+
+baetylCleint.on('error', async function (err) {
+    console.log('baetyl客户端连接错误', err)
+    await wait(1000)
     baetylCleint.reconnect()
 })
 

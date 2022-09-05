@@ -3,6 +3,8 @@ const { v4 } = require('uuid')
 const { Auth } = require('./auth')
 const mqtt = require('mqtt')
 
+//定义一个延时方法
+let wait = ms => new Promise(resolve => setTimeout(resolve, ms));
 class Device {
     constructor(entrypoint, productKey, deviceName, deviceSecret, instanceId, baetylMqttClient) {
         this.entrypoint = entrypoint;
@@ -45,7 +47,18 @@ class Device {
 
         })
 
-        this.mqttClient.on('disconnect', function () {
+        this.mqttClient.on('disconnect', async function () {
+            await wait(1000)
+            that.mqttClient.reconnect()
+        })
+
+        this.mqttClient.on('connect', function () {
+            console.log('DMP客户端连接成功')
+        })
+
+        this.mqttClient.on('error', async function (err) {
+            console.log('DMP客户端连接错误', err)
+            await wait(1000)
             that.mqttClient.reconnect()
         })
 
