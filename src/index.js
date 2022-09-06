@@ -25,7 +25,7 @@ if (!isUserName) {
     const TRUSTED_CA_LIST = fs.readFileSync('/var/lib/baetyl/system/certs/ca.pem')
 
     console.debug('crt.pem', CERT)
-    const HOST = process.env['baetyl_broker_host'] || 'ssl://baetyl-broker.baetyl-edge-system'
+    const HOST = process.env['baetyl_broker_host'] || 'baetyl-broker.baetyl-edge-system'
     const PORT = process.env['baetyl_broker_port'] || 50010
     optionsBaetyl = {
         port: PORT,
