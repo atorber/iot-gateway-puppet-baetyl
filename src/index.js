@@ -65,6 +65,7 @@ const instanceId = process.env['instanceId'];
 let gwClient = new GateWay(entrypoint, productKey, deviceName, deviceSecret, instanceId, baetylCleint)
 
 baetylCleint.on('connect', function () {
+
     baetylCleint.subscribe(process.env['baetyl_broker_report_topic'] || 'thing/+/+/property/post', function (err) {
         if (!err) {
             console.debug('baetyl订阅属性消息成功')
@@ -77,6 +78,15 @@ baetylCleint.on('connect', function () {
             console.debug('baetyl订阅事件消息成功')
         } else {
             console.debug('baetyl订阅事件消息失败')
+        }
+    })
+
+    // 兼容旧版topic，默认自动订阅老的topic
+    baetylCleint.subscribe('$baetyl/device/+/report', function (err) {
+        if (!err) {
+            console.debug('baetyl订阅$baetyl/device/+/report消息成功')
+        } else {
+            console.debug('baetyl订阅$baetyl/device/+/report消息失败')
         }
     })
 
