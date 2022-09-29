@@ -63,7 +63,7 @@ class Auth {
         let res = ''
         try {
             let r = await rp(opt)
-            // console.log(r)
+            console.log(r)
             res = r.content
         } catch (err) {
             console.error(err.error)
