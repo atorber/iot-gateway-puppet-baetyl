@@ -1,8 +1,13 @@
-# iot-gateway-puppet-baetyl
+# iot-gateway-puppet
 
-baetyl子设备消息北向对接DMP边缘应用
+物联网平台MQTT2MQTT协议转换对接代理服务框架，支持以下协议转换：
 
+- 百度智能边缘baetyl子设备消息北向对接DMP边缘应用
+
+- 82bot对接DMP
 ## 本地快速开始
+
+### baetyl对接DMP
 
 本地运行通过设置外部mqtt broker模拟baetyl-broker进行调试，在本地通过iotcore提供的mqtt-broker代替baetyl-broker
 
@@ -82,6 +87,33 @@ npm start
     }
 }
 ```
+### 82bot对接DMP
+
+设置环境变量 `export puppet="82mqtt"`,其余环境变量不变
+
+    82MQTT client信息环境变量
+
+    ```
+    export puppet="82mqtt"
+    export baetyl_broker_host="xxxx"
+    export baetyl_broker_username="xxxx"
+    export baetyl_broker_password="xxxx"
+    export baetyl_broker_port="xxxx"
+    ```
+
+    设置DMP配置相关的环境变量,此处所有配置从DMP中获得
+
+    ```
+    export entrypoint="http://180.76.145.103:8372"
+    export productKey="cgateway"
+    export deviceName="bietest001"
+    export deviceSecret="zqjxba22s4h4rbj945jp"
+    export instanceId="zasr9fjmk53aur26"
+    ```
+
+    启动程序
+
+    `npm start`
 
 ## docker下运行
 
@@ -111,8 +143,18 @@ docker pull atorber/iot-gateway-puppet-baetyl:latest
 
 > 将环境变量替换为实际的设备配置
 
+- baetyl
+
 ```
 docker run --env entrypoint="http://180.76.145.103:8372" --env productKey="cgateway" --env deviceName="bietest001" --env deviceSecret="zqjxba22s4h4rbj945jp" --env instanceId="zasr9fjmk53aur26" atorber/iot-gateway-puppet-baetyl:latest
+```
+
+> 默认使用应用证书连接,不需要配置baetyl_broker相关环境变量
+
+- 82bot
+
+```
+docker run --env puppet="82mqtt" --env baetyl_broker_host="xxxx" --env baetyl_broker_username="xxxx" --env baetyl_broker_password="xxxx" --env baetyl_broker_port="xxxx" --env entrypoint="http://180.76.145.103:8372" --env productKey="cgateway" --env deviceName="bietest001" --env deviceSecret="zqjxba22s4h4rbj945jp" --env instanceId="zasr9fjmk53aur26" atorber/iot-gateway-puppet-baetyl:latest
 ```
 
 ## 更新日志
@@ -120,27 +162,3 @@ docker run --env entrypoint="http://180.76.145.103:8372" --env productKey="cgate
 2022-10-17
 
 - 增加对82机器人接入的支持，设置环境变量 `export puppet="82mqtt"`,其余环境变量不变
-
-    82MQTT client信息环境变量
-
-    ```
-    export puppet="82mqtt"
-    export baetyl_broker_host="xxxx"
-    export baetyl_broker_username="xxxx"
-    export baetyl_broker_password="xxxx"
-    export baetyl_broker_port="xxxx"
-    ```
-
-    设置DMP配置相关的环境变量,此处所有配置从DMP中获得
-
-    ```
-    export entrypoint="http://180.76.145.103:8372"
-    export productKey="cgateway"
-    export deviceName="bietest001"
-    export deviceSecret="zqjxba22s4h4rbj945jp"
-    export instanceId="zasr9fjmk53aur26"
-    ```
-
-    启动程序
-
-    `npm start`
