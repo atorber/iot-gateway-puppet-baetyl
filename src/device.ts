@@ -158,6 +158,8 @@ class Device {
         })
     }
 
+    
+
     d2cRawPost(payload) {
         const topic = `thing/${this.productKey}/${this.deviceName}/raw/d2c`
         this.mqttClient.publish(topic, JSON.stringify(payload))

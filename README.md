@@ -114,3 +114,33 @@ docker pull atorber/iot-gateway-puppet-baetyl:latest
 ```
 docker run --env entrypoint="http://180.76.145.103:8372" --env productKey="cgateway" --env deviceName="bietest001" --env deviceSecret="zqjxba22s4h4rbj945jp" --env instanceId="zasr9fjmk53aur26" atorber/iot-gateway-puppet-baetyl:latest
 ```
+
+## 更新日志
+
+2022-10-17
+
+- 增加对82机器人接入的支持，设置环境变量 `export puppet="82mqtt"`,其余环境变量不变
+
+    82MQTT client信息环境变量
+
+    ```
+    export puppet="82mqtt"
+    export baetyl_broker_host="xxxx"
+    export baetyl_broker_username="xxxx"
+    export baetyl_broker_password="xxxx"
+    export baetyl_broker_port="xxxx"
+    ```
+
+    设置DMP配置相关的环境变量,此处所有配置从DMP中获得
+
+    ```
+    export entrypoint="http://180.76.145.103:8372"
+    export productKey="cgateway"
+    export deviceName="bietest001"
+    export deviceSecret="zqjxba22s4h4rbj945jp"
+    export instanceId="zasr9fjmk53aur26"
+    ```
+
+    启动程序
+
+    `npm start`
