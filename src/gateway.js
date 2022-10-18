@@ -1,8 +1,8 @@
 const { Device } = require('./device')
 
 class GateWay extends Device {
-    constructor(entrypoint, productKey, deviceName, deviceSecret, instanceId,baetylMqttClient) {
-        super(entrypoint, productKey, deviceName, deviceSecret, instanceId,baetylMqttClient); // 调用父类的 constructor(x, y)
+    constructor(optionsDevice, onCommand) {
+        super(optionsDevice, onCommand); // 调用父类的 constructor(x, y)
         this.subDeviceList = [];
     }
 

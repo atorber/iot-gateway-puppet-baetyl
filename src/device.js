@@ -6,17 +6,22 @@ const mqtt = require('mqtt')
 //定义一个延时方法
 let wait = ms => new Promise(resolve => setTimeout(resolve, ms));
 class Device {
-    constructor(entrypoint, productKey, deviceName, deviceSecret, instanceId, baetylMqttClient) {
+    constructor(optionsDevice, onCommand) {
+        const {
+            entrypoint, productKey, deviceName, deviceSecret, instanceId
+        } = optionsDevice
+
         this.entrypoint = entrypoint;
         this.productKey = productKey;
         this.deviceName = deviceName;
         this.deviceSecret = deviceSecret;
         this.instanceId = instanceId;
+        this.onCommand = onCommand
         this.mqttClient = ''
-        this.init(baetylMqttClient)
+        this.init(onCommand)
     }
 
-    async init(baetylMqttClient) {
+    async init() {
         const that = this
         const auth = new Auth(
             this.entrypoint,
@@ -60,72 +65,7 @@ class Device {
             console.log('DMP客户端连接错误', err)
         })
 
-        this.mqttClient.on('message', function (topic, message) {
-            // message is Buffer
-            console.log(message.toString())
-            console.log(topic)
-
-            let report = JSON.parse(message.toString())
-
-            if (process.env['puppet'] === '82mqtt') {
-
-                if (topic.indexOf("command/invoke") != -1) {
-
-                    console.log('从DMP收到一条服务调用消息')
-                    let payload = report.params
-
-                    console.log('即将发送到机器人的消息：', topic, JSON.stringify(payload))
-
-                    baetylMqttClient.publish(topic, JSON.stringify(payload))
-                }
-
-            } else {
-                // console.log(report)
-                if (report.subEquipment && report.method) {
-
-                    if (topic.indexOf("property/invoke") != -1) {
-
-                        console.log('从DMP收到一条设置属性消息')
-                        const curSubEquipment = report.subEquipment
-                        const topicSub = `thing/${curSubEquipment.productKey}/${curSubEquipment.deviceName}/property/invoke`
-                        delete report.subEquipment
-                        let payload = {
-                            "kind": "deviceDelta",
-                            "meta": {
-                                "accessTemplate": "xw-modbus-access-template",
-                                "device": curSubEquipment.deviceName, // 子设备的deviceName
-                                "deviceProduct": curSubEquipment.productKey, // 子设备的productKey
-                                "node": that.deviceName, // 网关的deviceName
-                                "nodeProduct": that.productKey // 网关的productKey
-                            },
-                            "content": {
-                                "blink": report
-                            }
-                        }
-
-                        console.log('即将发送到baetyl-broker的消息：', topicSub, JSON.stringify(payload))
-
-                        baetylMqttClient.publish(topicSub, JSON.stringify(payload))
-                    }
-
-                    //    if(topic.indexOf("event/post") != -1||report.content.blink.events){
-
-                    //        console.log('收到一条事件消息')
-
-                    //        let payload = report.content.blink
-                    //        let subEquipment = {
-                    //            productKey: report.meta.deviceProduct,
-                    //            deviceName: report.meta.device
-                    //        }
-                    //        gwClient.eventPostSub(payload, subEquipment)
-                    //    }
-
-                } else {
-                    console.error('暂未支持转发的接口')
-                }
-            }
-
-        })
+        this.mqttClient.on('message', this.onCommand)
     }
 
     subPropertyInvoke() {
