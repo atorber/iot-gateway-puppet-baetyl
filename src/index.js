@@ -92,7 +92,7 @@ function main() {
                     console.log('从baetyl收到一条属性上报消息')
                     payload = {
                         "reqId": v4(),
-                        "method": "thing.raw.post",
+                        "method": "thing.command.invoke",
                         "version": "1.0",
                         "timestamp": 1610430718000,
                         "code": 200,
@@ -124,7 +124,8 @@ function main() {
                     if (Object.keys(payloadRaw).includes('dev_alarm')) {
 
                         let alarmInfo = {
-                            dev_alarm: payloadRaw.dev_alarm
+                            dev_alarm: payloadRaw.dev_alarm,
+                            dev_alarm_time: curTime
                         }
 
                         payload = {
@@ -138,7 +139,7 @@ function main() {
                             }
                         }
 
-                    gwClient.eventPost(payload)
+                        gwClient.eventPost(payload)
 
                     }
                 }
