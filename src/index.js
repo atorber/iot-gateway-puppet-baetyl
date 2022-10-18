@@ -120,6 +120,27 @@ function main() {
                     }
 
                     gwClient.propertyPost(payload)
+
+                    if (Object.keys(payloadRaw).includes('dev_alarm')) {
+
+                        let alarmInfo = {
+                            dev_alarm: payloadRaw.dev_alarm
+                        }
+
+                        payload = {
+                            "reqId": v4(),
+                            "method": "thing.event.post",
+                            "version": "1.0",
+                            "timestamp": curTime,
+                            "bindName": "MAIN",
+                            "events": {
+                                alarmInfo
+                            }
+                        }
+
+                    gwClient.eventPost(payload)
+
+                    }
                 }
             } catch (err) {
                 console.error(err)
