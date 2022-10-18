@@ -31,7 +31,6 @@ function main() {
     if (puppet === '82mqtt') {
 
         // 使用用户名和密码方式连接二公司MQTT
-
         const HOST = process.env['baetyl_broker_host'] || '0.0.0.0'
         const PORT = process.env['baetyl_broker_port'] || 1883
         optionsBaetyl = {
@@ -154,8 +153,8 @@ function main() {
         */
 
     } else {
+        // 默认使用baetyl
         const isUserName = process.env['baetyl_broker_username'] || false;
-
         // 判断baetylCleint鉴权方式，当环境变量中没有baetyl_broker_username字段时，默认为自签证书认证，读取baetyl应用内置证书
         if (!isUserName) {
 
