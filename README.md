@@ -10,7 +10,7 @@
 
 ### baetyl对接DMP
 
-本地运行通过设置外部mqtt broker模拟baetyl-broker进行调试，在本地通过iotcore提供的mqtt-broker代替baetyl-broker
+本地运行通过设置外部mqtt broker模拟baetyl-broker进行调试，在本地通过iotcore提供的mqtt-broker代替baetyl-broker(在baetyl中运行时不需要配置`baetyl_broker_`开头的环境变量，程序直接使用baetyl内置的证书进行连接鉴权)
 
 1. 环境准备，安装nodejs > 16,下载本项目，安装依赖
 
