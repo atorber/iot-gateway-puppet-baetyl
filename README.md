@@ -6,6 +6,8 @@
 
 - 82bot对接DMP
 
+- TBD DMP透传消息解析为Blink（MQTT网桥实现）
+
 ## 本地快速开始
 
 ### baetyl对接DMP
