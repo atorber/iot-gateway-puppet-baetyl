@@ -2,11 +2,11 @@
 
 物联网平台MQTT2MQTT协议转换对接代理服务框架，支持以下协议转换：
 
-- 百度智能边缘baetyl子设备消息对接DMP(默认puppet)
+- 百度智能边缘baetyl子设备消息对接DMP(默认puppet，适用于BIE)
 
-- 82bot对接DMP(puppet:82mqtt)
+- 82bot对接DMP(puppet:82mqtt，适用于软网关)
 
-- TBD MQTT透传消息解析为Blink（puppet:mdpt2m,mqtt data parsing transformation to mqtt）
+- TBD MQTT透传消息解析为Blink（puppet:mdpt2m,mqtt data parsing transformation to mqtt，适用于协议适配）
 
 ## 快速开始
 
