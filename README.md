@@ -6,7 +6,7 @@
 
 - 82bot对接DMP
 
-- TBD DMP透传消息解析为Blink（MQTT网桥实现）
+- TBD DMP透传消息解析为Blink（MQTT网桥实现，支持自定义MQTT消息解析并转换为Blink，上行：订阅-解析——转换——转发，下行：订阅-转换-下发）
 
 ## 本地快速开始
 
