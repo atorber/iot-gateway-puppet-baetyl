@@ -9,6 +9,8 @@ const { GateWay } = require('./gateway')
 const fs = require('fs')
 const path = require('path')
 
+const { analysis } = require('./plugin/index');
+
 //定义一个延时方法
 let wait = ms => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -173,6 +175,59 @@ function main() {
         “dir_change_flag”: 1,
         }
         */
+
+    } else if (puppet === 'mrdpt2m') {
+        // 使用用户名和密码方式连接二公司MQTT
+        const HOST = process.env['baetyl_broker_host'] || '0.0.0.0'
+        const PORT = process.env['baetyl_broker_port'] || 1883
+        optionsBaetyl = {
+            host: HOST,
+            username: process.env['baetyl_broker_username'] || '',
+            password: process.env['baetyl_broker_password'] || '',
+            port: PORT,
+            clientId: v4()
+        }
+
+        baetylCleint = mqtt.connect(optionsBaetyl)
+        // 监听connect事件
+        baetylCleint.on('connect', function () {
+            console.log('Connected');
+
+            // 订阅某个产品设备上报主题
+            baetylCleint.subscribe('thing/abc/+/raw/d2c', function (err) {
+                if (!err) {
+                    // 订阅成功后，可以发布消息到该主题
+
+                }
+            });
+            // 订阅某个产品设备下行消息
+            baetylCleint.subscribe('thing/abc/+/property/invoke', function (err) {
+                if (!err) {
+                    // 订阅成功后，可以发布消息到该主题
+
+                }
+            });
+        });
+
+        // 监听message事件
+        baetylCleint.on('message', function (topic, message) {
+            // message是Buffer类型，需要转换为字符串
+            console.log(message.toString());
+            console.log(topic);
+            const device = {
+                productKey: topic.split("/")[1],
+                deviceName: topic.split("/")[2]
+            }
+            // 使用正则表达式检查主题名是否符合订阅的模式
+            if (/^thing\/abc\/.+\/property\/invoke$/.test(topic)) {
+                analysis.blink2raw(baetylCleint, device, message)
+            }
+            if (/^thing\/abc\/.+\/raw\/d2c$/.test(topic)) {
+                analysis.raw2blink(baetylCleint, device, message)
+
+            }
+        });
+
 
     } else {
         // 默认使用baetyl

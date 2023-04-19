@@ -6,7 +6,7 @@
 
 - 82bot对接DMP(puppet:82mqtt，适用于软网关)
 
-- TBD MQTT透传消息解析为Blink（puppet:mdpt2m,mqtt raw data parsing transformation to mqtt，适用于协议适配）
+- TBD MQTT透传消息解析为Blink（puppet:mrdpt2m,mqtt raw data parsing transformation to mqtt，适用于协议适配）
 
 ## 快速开始
 
