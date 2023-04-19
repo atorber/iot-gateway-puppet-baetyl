@@ -6,9 +6,9 @@
 
 - 82bot对接DMP(puppet:82mqtt)
 
-- TBD DMP透传消息解析为Blink（puppet:mdpt2m,mqtt data parsing transformation to mqtt，MQTT网桥实现，支持自定义MQTT消息解析并转换为Blink，上行：订阅-解析——转换——转发，下行：订阅-转换-下发）
+- TBD MQTT透传消息解析为Blink（puppet:mdpt2m,mqtt data parsing transformation to mqtt）
 
-## 本地快速开始
+## 快速开始
 
 ### baetyl对接DMP
 
