@@ -2,11 +2,11 @@
 
 物联网平台MQTT2MQTT协议转换对接代理服务框架，支持以下协议转换：
 
-- 百度智能边缘baetyl子设备消息对接DMP
+- 百度智能边缘baetyl子设备消息对接DMP(默认puppet)
 
-- 82bot对接DMP
+- 82bot对接DMP(puppet:82mqtt)
 
-- TBD DMP透传消息解析为Blink（MQTT网桥实现，支持自定义MQTT消息解析并转换为Blink，上行：订阅-解析——转换——转发，下行：订阅-转换-下发）
+- TBD DMP透传消息解析为Blink（puppet:mdpt2m,mqtt data parsing transformation to mqtt，MQTT网桥实现，支持自定义MQTT消息解析并转换为Blink，上行：订阅-解析——转换——转发，下行：订阅-转换-下发）
 
 ## 本地快速开始
 
@@ -117,6 +117,16 @@ npm start
     启动程序
 
     `npm start`
+    
+### mdpt2m协议解析转换-TBD
+
+MQTT数据解析转换为Blink转发到DMP（mqtt data parsing transformation to mqtt）
+
+MQTT网桥实现，支持自定义MQTT消息解析并转换为Blink，使用productKey、productType拓展不同厂家设备的解析协议
+
+- 上行：订阅-解析——转换——转发
+
+- 下行：订阅-转换-下发
 
 ## docker下运行
 
