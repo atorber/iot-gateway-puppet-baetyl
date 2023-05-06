@@ -49,26 +49,23 @@ function main() {
         const d2cResponseSub = `thing/${optionsDevice.productKey}/${optionsDevice.deviceName}/response/d2c`
 
         baetylCleint.on('connect', function () {
+            console.log('baetylCleint客户端连接成功')
 
             baetylCleint.subscribe(propertySub, function (err) {
                 if (!err) {
-                    console.debug('baetyl订阅属性消息成功:', propertySub)
+                    console.debug('代理服务订阅属性消息成功:', propertySub)
                 } else {
-                    console.debug('baetyl订阅属性消息失败:', propertySub)
+                    console.debug('代理服务订阅属性消息失败:', propertySub)
                 }
             })
             baetylCleint.subscribe(d2cResponseSub, function (err) {
                 if (!err) {
-                    console.debug('baetyl订阅属性消息成功:', d2cResponseSub)
+                    console.debug('代理服务订阅属性消息成功:', d2cResponseSub)
                 } else {
-                    console.debug('baetyl订阅属性消息失败:', d2cResponseSub)
+                    console.debug('代理服务订阅属性消息失败:', d2cResponseSub)
                 }
             })
 
-        })
-
-        baetylCleint.on('connect', function () {
-            console.log('baetylCleint客户端连接成功')
         })
 
         baetylCleint.on('disconnect', async function () {
@@ -77,11 +74,11 @@ function main() {
         })
 
         baetylCleint.on('error', async function (err) {
-            console.log('baetyl客户端连接错误', err)
+            console.log('代理服务客户端连接错误', err)
         })
 
         baetylCleint.on('message', function (topic, message) {
-            console.log('从baetyl订阅到的消息：')
+            console.log('从代理服务订阅到的消息：')
             console.log(topic, message.toString())
 
             try {
@@ -91,7 +88,7 @@ function main() {
                 // 根据订阅的算法数据进行轨迹行踪
                 if (topic === d2cResponseSub) {
 
-                    console.log('从baetyl收到一条属性上报消息')
+                    console.log('从代理服务收到一条属性上报消息')
                     payload = {
                         "reqId": v4(),
                         "method": "thing.command.invoke",
@@ -111,7 +108,7 @@ function main() {
                 // 根据订阅机器人数据进行轨迹完成确认
                 if (topic === propertySub) {
 
-                    console.log('从baetyl收到一条属性上报消息')
+                    console.log('从代理服务收到一条属性上报消息')
                     payload = {
                         "reqId": v4(),
                         "method": "thing.property.post",
